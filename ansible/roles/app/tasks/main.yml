@@ -1,0 +1,52 @@
+---
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+# The VM image ships a host nginx on port 80, which the reverse proxy needs.
+# Its only custom piece, /health, is reproduced in compose/nginx/default.conf
+- name: Stop and disable host nginx
+  ansible.builtin.systemd_service:
+    name: nginx
+    state: stopped
+    enabled: false
+  when: "'nginx.service' in ansible_facts.services"
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_owner }}"
+    group: "{{ app_owner }}"
+    mode: "0755"
+
+# Trailing slash: copy the directory contents, not the directory itself
+- name: Copy Compose project
+  ansible.builtin.copy:
+    src: "{{ app_src_dir }}/"
+    dest: "{{ app_dir }}/"
+    owner: "{{ app_owner }}"
+    group: "{{ app_owner }}"
+    mode: "0644"
+    directory_mode: "0755"
+  notify: Restart app stack
+
+- name: Start Compose stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_dir }}"
+    state: present
+    pull: missing
+    wait: true
+    wait_timeout: 120
+
+# Config files are bind-mounted, and "compose up" does not recreate containers
+# when only their content changes, so restart before checking the result
+- name: Apply pending restart
+  ansible.builtin.meta: flush_handlers
+
+- name: Check the proxy serves Hello World
+  ansible.builtin.uri:
+    url: http://127.0.0.1/
+    return_content: true
+  register: app_page
+  failed_when: "'Hello World' not in app_page.content"
+  changed_when: false

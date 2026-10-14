@@ -1,0 +1,6 @@
+---
+- name: Deploy Compose stack to /opt/app
+  hosts: vm
+  become: true
+  roles:
+    - app

@@ -1,0 +1,45 @@
+
+PLAY [Deploy Compose stack to /opt/app] ****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [devops]
+
+TASK [app : Gather service facts] **********************************************
+ok: [devops]
+
+TASK [app : Stop and disable host nginx] ***************************************
+changed: [devops]
+
+TASK [app : Create application directory] **************************************
+--- before
++++ after
+@@ -1,6 +1,6 @@
+ {
+-    "group": 0,
+-    "owner": 0,
++    "group": 1005,
++    "owner": 1005,
+     "path": "/opt/app",
+-    "state": "absent"
++    "state": "directory"
+ }
+
+changed: [devops]
+
+TASK [app : Copy Compose project] **********************************************
+changed: [devops]
+
+TASK [app : Start Compose stack] ***********************************************
+changed: [devops]
+
+TASK [app : Apply pending restart] *********************************************
+
+RUNNING HANDLER [app : Restart app stack] **************************************
+changed: [devops]
+
+TASK [app : Check the proxy serves Hello World] ********************************
+ok: [devops]
+
+PLAY RECAP *********************************************************************
+devops                     : ok=8    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

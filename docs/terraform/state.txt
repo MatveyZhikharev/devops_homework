@@ -1,0 +1,16 @@
+$ terraform state list
+docker_container.nginx
+docker_image.nginx
+docker_network.nginx
+docker_volume.nginx_html
+
+$ terraform plan
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+
+$ terraform output
+container_name = "tf-nginx"
+network_name = "tf-nginx-net"
+nginx_url = "http://111.88.162.125:8080"
+volume_name = "tf-nginx-html"
