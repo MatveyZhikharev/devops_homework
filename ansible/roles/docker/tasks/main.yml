@@ -1,0 +1,77 @@
+---
+# Removing docker.io keeps /var/lib/docker (images, volumes); only purge would delete it
+- name: Remove conflicting Docker packages
+  ansible.builtin.apt:
+    name: "{{ docker_conflicting_packages }}"
+    state: absent
+
+# Replaced by the deb822 docker.sources below; keeping both duplicates the repo
+- name: Remove legacy one-line Docker repo file
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/docker.list
+    state: absent
+
+- name: Install repository prerequisites
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - python3-debian # required by deb822_repository
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Ensure apt keyrings directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Download Docker GPG key
+  ansible.builtin.get_url:
+    url: "{{ docker_apt_key_url }}"
+    dest: "{{ docker_apt_key_path }}"
+    checksum: "{{ docker_apt_key_checksum }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Add Docker apt repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: deb
+    uris: "{{ docker_apt_repo_url }}"
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: stable
+    architectures: "{{ docker_apt_arch_map[ansible_facts['architecture']] }}"
+    signed_by: "{{ docker_apt_key_path }}"
+  register: docker_repo
+
+# cache_valid_time above may skip the refresh, so force it when the repo was just added
+- name: Refresh apt cache after adding Docker repository
+  ansible.builtin.apt:
+    update_cache: true
+  when: docker_repo is changed
+
+- name: Install Docker Engine and Compose plugin
+  ansible.builtin.apt:
+    name: "{{ docker_packages }}"
+    state: present
+  notify: Restart Docker
+
+# Restart right away, not at the end of the play, so the next task checks a working daemon
+- name: Apply pending Docker restart
+  ansible.builtin.meta: flush_handlers
+
+# dockerd runs with -H fd:// and gets its API socket from docker.socket,
+# so both units must be running and enabled
+- name: Start Docker and enable it on boot
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - docker.socket
+    - docker.service

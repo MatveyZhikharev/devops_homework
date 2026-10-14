@@ -1,0 +1,46 @@
+
+PLAY [Prepare host for running containers] *************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [devops]
+
+TASK [docker : Remove conflicting Docker packages] *****************************
+ok: [devops]
+
+TASK [docker : Remove legacy one-line Docker repo file] ************************
+ok: [devops]
+
+TASK [docker : Install repository prerequisites] *******************************
+ok: [devops]
+
+TASK [docker : Ensure apt keyrings directory exists] ***************************
+ok: [devops]
+
+TASK [docker : Download Docker GPG key] ****************************************
+ok: [devops]
+
+TASK [docker : Add Docker apt repository] **************************************
+ok: [devops]
+
+TASK [docker : Refresh apt cache after adding Docker repository] ***************
+skipping: [devops]
+
+TASK [docker : Install Docker Engine and Compose plugin] ***********************
+ok: [devops]
+
+TASK [docker : Start Docker and enable it on boot] *****************************
+[ERROR]: Task failed: Module failed: Unable to start service docker: Job for docker.service failed because the control process exited with error code.
+See "systemctl status docker.service" and "journalctl -xeu docker.service" for details.
+
+Origin: /home/matvey/devops/homework1/ansible/roles/docker/tasks/main.yml:63:3
+
+61     state: present
+62
+63 - name: Start Docker and enable it on boot
+     ^ column 3
+
+fatal: [devops]: FAILED! => {"changed": false, "msg": "Unable to start service docker: Job for docker.service failed because the control process exited with error code.\nSee \"systemctl status docker.service\" and \"journalctl -xeu docker.service\" for details.\n"}
+
+PLAY RECAP *********************************************************************
+devops                     : ok=8    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+

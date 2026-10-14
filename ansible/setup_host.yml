@@ -1,0 +1,9 @@
+---
+- name: Prepare host for running containers
+  hosts: vm
+  become: true
+  # Order matters: the docker group must exist before deployer is added to it
+  roles:
+    - docker
+    - deployer
+    - ssh_hardening

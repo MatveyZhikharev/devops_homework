@@ -1,0 +1,28 @@
+---
+# No password is set, so the account stays locked for password login: SSH key only
+- name: Create deployer user
+  ansible.builtin.user:
+    name: "{{ deployer_user }}"
+    home: "{{ deployer_home }}"
+    shell: /bin/bash
+    groups: "{{ deployer_groups }}"
+    append: true
+    create_home: true
+
+- name: Authorize SSH key for deployer
+  ansible.posix.authorized_key:
+    user: "{{ deployer_user }}"
+    key: "{{ lookup('ansible.builtin.file', deployer_pubkey_file) }}"
+    # Explicit path lets --check work before the user exists
+    path: "{{ deployer_home }}/.ssh/authorized_keys"
+    exclusive: true
+
+# validate stops a broken sudoers file from ever being written and locking out sudo
+- name: Allow deployer passwordless sudo
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ deployer_user }}"
+    content: "{{ deployer_user }} ALL=(ALL) NOPASSWD:ALL\n"
+    owner: root
+    group: root
+    mode: "0440"
+    validate: visudo -cf %s

@@ -1,0 +1,51 @@
+
+PLAY [Prepare host for running containers] *************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [devops]
+
+TASK [docker : Remove conflicting Docker packages] *****************************
+ok: [devops]
+
+TASK [docker : Remove legacy one-line Docker repo file] ************************
+ok: [devops]
+
+TASK [docker : Install repository prerequisites] *******************************
+ok: [devops]
+
+TASK [docker : Ensure apt keyrings directory exists] ***************************
+ok: [devops]
+
+TASK [docker : Download Docker GPG key] ****************************************
+ok: [devops]
+
+TASK [docker : Add Docker apt repository] **************************************
+ok: [devops]
+
+TASK [docker : Refresh apt cache after adding Docker repository] ***************
+skipping: [devops]
+
+TASK [docker : Install Docker Engine and Compose plugin] ***********************
+ok: [devops]
+
+TASK [docker : Apply pending Docker restart] ***********************************
+
+TASK [docker : Start Docker and enable it on boot] *****************************
+ok: [devops] => (item=docker.socket)
+ok: [devops] => (item=docker.service)
+
+TASK [deployer : Create deployer user] *****************************************
+ok: [devops]
+
+TASK [deployer : Authorize SSH key for deployer] *******************************
+ok: [devops]
+
+TASK [deployer : Allow deployer passwordless sudo] *****************************
+ok: [devops]
+
+TASK [ssh_hardening : Disable password and root SSH login] *********************
+ok: [devops]
+
+PLAY RECAP *********************************************************************
+devops                     : ok=13   changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+
