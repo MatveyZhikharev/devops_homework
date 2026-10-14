@@ -79,23 +79,23 @@ ssh devops 'bash -s -- docker' < ../scripts/monitor.sh   # на VM без коп
 
 ## Результаты
 
-Полные выводы лежат в [docs/](docs/). Скриншоты — в [docs/screenshots/](docs/screenshots/).
+### `terraform state list` и повторный прогон Ansible (идемпотентность)
 
-| Что | Файл с выводом | Скриншот |
-|---|---|---|
-| `terraform state list`, повторный `plan` → No changes | [docs/terraform/state.txt](docs/terraform/state.txt) | `docs/screenshots/terraform-state.png` |
-| `curl -i http://<IP>:8080` → 200 OK | [docs/terraform/curl.txt](docs/terraform/curl.txt) | `docs/screenshots/terraform-curl.png` |
-| Ansible, второй прогон `setup_host.yml` → `changed=0` | [docs/ansible/04-idempotency-run.log](docs/ansible/04-idempotency-run.log) | `docs/screenshots/ansible-idempotency.png` |
-| Ansible, второй прогон `deploy_app.yml` → `changed=0` | [docs/ansible/06-deploy-app-idempotency-run.log](docs/ansible/06-deploy-app-idempotency-run.log) | — |
-| `monitor.sh` на VM (active / inactive / not found / нет прав) | [docs/monitor/vm.txt](docs/monitor/vm.txt) | `docs/screenshots/monitor-vm.png` |
-| `monitor.sh` локально | [docs/monitor/local.txt](docs/monitor/local.txt) | `docs/screenshots/monitor-local.png` |
-| `docker compose ps` и `curl -i http://<IP>` | [docs/compose/ps-and-curl.txt](docs/compose/ps-and-curl.txt) | `docs/screenshots/compose.png` |
+![terraform state list и второй прогон setup_host.yml с changed=0](docs/screenshots/terraform-and-ansible.png)
 
-Итог второго прогона `setup_host.yml`:
+### Остальные результаты
 
-```
-devops : ok=13   changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
-```
+Полные текстовые выводы лежат в [docs/](docs/):
+
+| Что | Файл с выводом |
+|---|---|
+| `terraform state list`, повторный `plan` → No changes | [docs/terraform/state.txt](docs/terraform/state.txt) |
+| `curl -i http://<IP>:8080` → 200 OK | [docs/terraform/curl.txt](docs/terraform/curl.txt) |
+| Ansible, все прогоны `setup_host.yml`, включая сбой и исправление | [docs/ansible/](docs/ansible/) |
+| Ansible, второй прогон `deploy_app.yml` → `changed=0` | [docs/ansible/06-deploy-app-idempotency-run.log](docs/ansible/06-deploy-app-idempotency-run.log) |
+| `monitor.sh` на VM (active / inactive / not found / нет прав) | [docs/monitor/vm.txt](docs/monitor/vm.txt) |
+| `monitor.sh` локально | [docs/monitor/local.txt](docs/monitor/local.txt) |
+| `docker compose ps` и `curl -i http://<IP>` | [docs/compose/ps-and-curl.txt](docs/compose/ps-and-curl.txt) |
 
 ## Архитектурные решения
 
