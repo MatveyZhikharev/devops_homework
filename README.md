@@ -83,9 +83,80 @@ ssh devops 'bash -s -- docker' < ../scripts/monitor.sh   # на VM без коп
 
 ![terraform state list и второй прогон setup_host.yml с changed=0](docs/screenshots/terraform-and-ansible.png)
 
-### Остальные результаты
+### Terraform: `curl -i` на нестандартный порт
 
-Полные текстовые выводы лежат в [docs/](docs/):
+```
+$ curl -i http://111.88.162.125:8080
+HTTP/1.1 200 OK
+Server: nginx/1.27.5
+Content-Type: text/html
+Content-Length: 212
+
+<h1>Hello from Terraform</h1>
+<p>nginx in its own Docker network, content served from a Docker volume.</p>
+```
+
+### monitor.sh
+
+Запуск на VM: активный сервис, остановленный сервис (nginx хоста, выключен `deploy_app.yml`) и несуществующий unit.
+
+```
+$ ./scripts/monitor.sh docker
+
+== Service: docker.service ==
+Status: active
+
+== Errors in /var/log/syslog for the last 60 min ==
+Total: 71
+Top sources:
+      44  dockerd
+      15  systemd
+      12  containerd
+
+$ ./scripts/monitor.sh nginx
+
+== Service: nginx.service ==
+Status: inactive
+
+== Last 10 log lines (journalctl -u nginx.service) ==
+...
+Oct 14 21:24:53 zhikharevma systemd[1]: Stopping nginx.service - A high performance web server and a reverse proxy server...
+Oct 14 21:24:53 zhikharevma systemd[1]: nginx.service: Deactivated successfully.
+Oct 14 21:24:53 zhikharevma systemd[1]: Stopped nginx.service - A high performance web server and a reverse proxy server.
+
+== Errors in /var/log/syslog for the last 60 min ==
+Total: 71
+...
+[exit=1]
+
+$ ./scripts/monitor.sh nosuchsvc
+
+== Service: nosuchsvc.service ==
+NOT FOUND: unit nosuchsvc.service does not exist on zhikharevma
+[exit=3]
+```
+
+### Docker Compose: `docker compose ps` и `curl`
+
+```
+$ docker compose ps   # в /opt/app
+NAME          IMAGE               SERVICE   STATUS                        PORTS
+app-app-1     nginx:1.27-alpine   app       Up About a minute (healthy)   80/tcp
+app-nginx-1   nginx:1.27-alpine   nginx     Up About a minute (healthy)   0.0.0.0:80->80/tcp, [::]:80->80/tcp
+
+$ curl -i http://111.88.162.125
+HTTP/1.1 200 OK
+Server: nginx/1.27.5
+Content-Type: text/html
+Content-Length: 197
+
+<h1>Hello World</h1>
+<p>Served by the app container through the nginx reverse proxy.</p>
+```
+
+### Полные выводы
+
+Без сокращений все выводы лежат в [docs/](docs/):
 
 | Что | Файл с выводом |
 |---|---|
