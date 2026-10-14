@@ -1,0 +1,5 @@
+# Copy to terraform.tfvars and adjust
+vm_host = "111.88.162.125"
+# ssh_user             = "deployer"
+# ssh_private_key_path = "~/.ssh/ansible_key"
+# external_port        = 8080
