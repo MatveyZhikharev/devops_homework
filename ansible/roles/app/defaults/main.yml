@@ -1,0 +1,5 @@
+---
+app_dir: /opt/app
+app_owner: "{{ deployer_user | default('deployer') }}"
+# Compose project kept in the repo next to the ansible/ directory
+app_src_dir: "{{ playbook_dir }}/../compose"

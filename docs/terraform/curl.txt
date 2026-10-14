@@ -1,0 +1,19 @@
+$ curl -i http://111.88.162.125:8080
+HTTP/1.1 200 OK
+Server: nginx/1.27.5
+Date: Wed, 14 Oct 2026 21:26:29 GMT
+Content-Type: text/html
+Content-Length: 212
+Last-Modified: Wed, 14 Oct 2026 21:20:38 GMT
+Connection: keep-alive
+ETag: "6acff226-d4"
+Accept-Ranges: bytes
+
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>tf-nginx</title></head>
+<body>
+<h1>Hello from Terraform</h1>
+<p>nginx in its own Docker network, content served from a Docker volume.</p>
+</body>
+</html>

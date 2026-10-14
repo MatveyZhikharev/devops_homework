@@ -1,0 +1,8 @@
+# Terraform: state may contain secrets, providers are re-downloaded by init
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+tfplan

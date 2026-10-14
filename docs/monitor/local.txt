@@ -1,0 +1,19 @@
+$ ./scripts/monitor.sh cron     # local laptop
+
+== Service: cron.service ==
+Status: active
+
+== Errors in /var/log/syslog for the last 60 min ==
+Total: 113
+Top sources:
+      40  systemd
+       8  happd
+       8  gsd-media-keys
+       8  gnome-shell
+       8  com.anthropic.Claude.desktop
+[exit=0]
+
+$ ./scripts/monitor.sh
+Usage: monitor.sh <service> [minutes]
+Example: monitor.sh docker
+[exit=2]

@@ -1,0 +1,7 @@
+---
+deployer_user: deployer
+deployer_home: "/home/{{ deployer_user }}"
+deployer_pubkey_file: ~/.ssh/id_ed25519.pub
+# docker group gives access to /var/run/docker.sock (needed by the Terraform docker provider over SSH)
+deployer_groups:
+  - docker

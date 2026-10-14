@@ -1,0 +1,29 @@
+---
+# Ubuntu-packaged Docker conflicts with docker-ce from the official repo
+# (list from https://docs.docker.com/engine/install/ubuntu/)
+docker_conflicting_packages:
+  - docker.io
+  - docker-doc
+  - docker-compose
+  - docker-compose-v2
+  - podman-docker
+  - containerd
+  - runc
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+docker_apt_key_url: https://download.docker.com/linux/ubuntu/gpg
+docker_apt_key_path: /etc/apt/keyrings/docker.asc
+# Pins the expected key: a tampered or rotated key fails the run instead of being trusted silently
+docker_apt_key_checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
+docker_apt_repo_url: https://download.docker.com/linux/ubuntu
+
+# Maps ansible_facts.architecture to Debian arch names
+docker_apt_arch_map:
+  x86_64: amd64
+  aarch64: arm64

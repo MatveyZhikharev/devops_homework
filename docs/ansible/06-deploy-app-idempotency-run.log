@@ -1,0 +1,29 @@
+
+PLAY [Deploy Compose stack to /opt/app] ****************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [devops]
+
+TASK [app : Gather service facts] **********************************************
+ok: [devops]
+
+TASK [app : Stop and disable host nginx] ***************************************
+ok: [devops]
+
+TASK [app : Create application directory] **************************************
+ok: [devops]
+
+TASK [app : Copy Compose project] **********************************************
+ok: [devops]
+
+TASK [app : Start Compose stack] ***********************************************
+ok: [devops]
+
+TASK [app : Apply pending restart] *********************************************
+
+TASK [app : Check the proxy serves Hello World] ********************************
+ok: [devops]
+
+PLAY RECAP *********************************************************************
+devops                     : ok=7    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

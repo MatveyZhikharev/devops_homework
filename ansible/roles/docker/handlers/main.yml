@@ -1,0 +1,13 @@
+---
+# Replacing docker.io with docker-ce rewrites docker.socket while it is running;
+# systemd then keeps a dead socket and dockerd fails with
+# "no sockets found via socket activation" on its next start.
+# Restarting the socket first gives dockerd a fresh listener.
+- name: Restart Docker
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    state: restarted
+    daemon_reload: true
+  loop:
+    - docker.socket
+    - docker.service
